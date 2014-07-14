@@ -6,11 +6,11 @@ import java.io.Serializable;
 public class LessFolder implements Serializable {
 
 	private String filename;
-
+	
 	public LessFolder(String filename) {
 		this.filename = filename;
 	}
-
+	
 	public String getFilename() {
 		return filename;
 	}

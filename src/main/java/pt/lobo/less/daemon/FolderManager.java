@@ -1,6 +1,7 @@
 package pt.lobo.less.daemon;
 
 import java.util.Set;
+import java.util.prefs.Preferences;
 
 import pt.lobo.less.daemon.event.AddFolderEvent;
 import pt.lobo.less.daemon.event.RemoveFolderEvent;
@@ -15,13 +16,24 @@ import com.google.inject.Singleton;
 public class FolderManager {
 
 	private Set<LessFolder> folders = Sets.newHashSet();
+	
 	private EventBus eventBus;
+	
+	private Preferences preferences;
+	
+	private static final String KEY_FOLDER_LIST = "folders";
 	
 	@Inject
 	public FolderManager(EventBus eventBus) {
 		this.eventBus = eventBus;
+		preferences = Preferences.userNodeForPackage(FolderManager.class);
+		loadPreferences();
 	}
 	
+	private void loadPreferences() {
+		
+	}
+
 	public int getFolderCount() {
 		return folders.size();
 	}

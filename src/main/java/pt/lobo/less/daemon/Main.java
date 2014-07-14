@@ -29,7 +29,6 @@ public class Main extends JFrame {
 	public Main() {
 		Guice.createInjector(new LessModule()).injectMembers(this);
 		eventBus.register(this);
-
 		EventQueue.invokeLater(tray);
 	}
 	
