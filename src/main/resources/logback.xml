@@ -2,15 +2,13 @@
 <configuration scan="true" scanPeriod="2000">
 	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<!-- pattern>%d %-5p [%thread] %c{0}> %m%n%rEx</pattern -->
-			<!-- pattern>%d{HH:mm:ss.SSS} [%t] %-5level %logger.%M\(%F:%L\) - %msg%n</pattern-->
 			<pattern>%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</pattern>
 		</encoder>
 	</appender>
 
-	<logger name="pt.lobo" level="DEBUG" />
+	<logger name="com.github.lobo" level="DEBUG" />
 
-	<root level="WARN">
+	<root level="DEBUG">
 		<appender-ref ref="stdout" />
 	</root>
 </configuration>

@@ -1,4 +1,4 @@
-package pt.lobo.less.daemon.action;
+package com.github.lobo.less.daemon.action;
 
 import java.awt.MenuItem;
 import java.awt.MenuShortcut;
@@ -6,8 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
-import pt.lobo.less.daemon.event.ExitEvent;
-
+import com.github.lobo.less.daemon.event.ExitEvent;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 

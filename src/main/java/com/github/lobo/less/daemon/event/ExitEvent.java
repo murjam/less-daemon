@@ -1,4 +1,4 @@
-package pt.lobo.less.daemon.event;
+package com.github.lobo.less.daemon.event;
 
 import java.io.Serializable;
 

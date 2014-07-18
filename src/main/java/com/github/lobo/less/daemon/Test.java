@@ -1,4 +1,4 @@
-package pt.lobo.less.daemon;
+package com.github.lobo.less.daemon;
 
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;

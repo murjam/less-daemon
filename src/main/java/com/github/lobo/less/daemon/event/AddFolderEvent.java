@@ -1,15 +1,17 @@
-package pt.lobo.less.daemon.event;
+package com.github.lobo.less.daemon.event;
 
 import java.io.Serializable;
 
-import pt.lobo.less.daemon.types.LessFolder;
+import com.github.lobo.less.daemon.model.LessFolder;
+import com.google.common.base.Preconditions;
 
 @SuppressWarnings("serial")
-public class RemoveFolderEvent implements Serializable {
+public class AddFolderEvent implements Serializable {
 
 	private LessFolder folder;
 
-	public RemoveFolderEvent(LessFolder folder) {
+	public AddFolderEvent(LessFolder folder) {
+		Preconditions.checkNotNull(folder, "The folder cannot be null for add event");
 		this.folder = folder;
 	}
 

@@ -1,9 +1,9 @@
-package pt.lobo.less.daemon.event;
+package com.github.lobo.less.daemon.event;
 
 import java.awt.PopupMenu;
 import java.io.Serializable;
 
-import pt.lobo.less.daemon.tray.Tray;
+import com.github.lobo.less.daemon.tray.Tray;
 
 @SuppressWarnings("serial")
 public class TrayReadyEvent implements Serializable {
