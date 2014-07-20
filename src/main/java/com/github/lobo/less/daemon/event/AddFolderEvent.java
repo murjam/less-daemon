@@ -9,10 +9,12 @@ import com.google.common.base.Preconditions;
 public class AddFolderEvent implements Serializable {
 
 	private LessFolder folder;
+	private boolean store;
 
-	public AddFolderEvent(LessFolder folder) {
+	public AddFolderEvent(LessFolder folder, boolean store) {
 		Preconditions.checkNotNull(folder, "The folder cannot be null for add event");
 		this.folder = folder;
+		this.store = store;
 	}
 
 	public LessFolder getFolder() {
@@ -23,9 +25,17 @@ public class AddFolderEvent implements Serializable {
 		this.folder = folder;
 	}
 
+	public boolean isStore() {
+		return store;
+	}
+
+	public void setStore(boolean store) {
+		this.store = store;
+	}
+
 	@Override
 	public String toString() {
-		return "AddFolderEvent [folder=" + folder + "]";
+		return "AddFolderEvent [folder=" + folder + ", store=" + store + "]";
 	}
 
 }

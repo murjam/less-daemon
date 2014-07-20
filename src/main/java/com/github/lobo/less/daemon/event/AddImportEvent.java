@@ -5,11 +5,11 @@ import java.io.Serializable;
 import com.github.lobo.less.daemon.model.LessFile;
 
 @SuppressWarnings("serial")
-public class RemoveImportEvent implements Serializable {
+public class AddImportEvent implements Serializable {
 
 	private LessFile file;
 
-	public RemoveImportEvent(LessFile file) {
+	public AddImportEvent(LessFile file) {
 		this.file = file;
 	}
 	
@@ -27,7 +27,7 @@ public class RemoveImportEvent implements Serializable {
 	
 	@Override
 	public String toString() {
-		return "RemoveImportEvent [file=" + file + "]";
+		return "AddImportEvent [file=" + file + "]";
 	}
 
 }

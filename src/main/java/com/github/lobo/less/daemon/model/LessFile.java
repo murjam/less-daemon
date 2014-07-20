@@ -21,6 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.lobo.less.daemon.event.AddFileEvent;
+import com.github.lobo.less.daemon.event.AddImportEvent;
+import com.github.lobo.less.daemon.event.RemoveFileEvent;
 import com.github.lobo.less.daemon.event.RemoveImportEvent;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -63,12 +65,12 @@ public class LessFile implements Serializable, LessContainer {
 				// Process removes
 				SetView<String> removes = Sets.difference(importDeclarations, newImports);
 				for(String removedImport : removes)
-					removeFile(removedImport);
+					removeImport(removedImport);
 
 				// Process add
 				SetView<String> adds = Sets.difference(newImports, importDeclarations);
 				for(String addedImport : adds)
-					addFile(addedImport);
+					addImport(addedImport);
 				
 				importDeclarations = newImports;
 			}
@@ -185,33 +187,40 @@ public class LessFile implements Serializable, LessContainer {
 		return true;
 	}
 
-	public void addFile(String filename) {
-		LessFile file = lessFileProvider.get();
-		file.initialize(filename, this);
+	public void addImport(String filename) {
+		LessFile toAdd = lessFileProvider.get();
+		toAdd.initialize(filename, this);
+		eventBus.post(new AddImportEvent(toAdd));
 	}
 	
 	@Override
 	public void addFile(LessFile file) {
 		files.add(file);
 		paths.put(file.getFilename(), file);
-		if(logger.isDebugEnabled())
+		if(logger.isTraceEnabled())
 			logger.debug("ADDED import {} to file {} (root={})", file, this, root);
 	}
 
-	public void removeFile(String removedFile) {
+	public void removeImport(String removedFile) {
 		LessFile toRemove = paths.get(removedFile);
-		removeFile(toRemove);
+		for(LessFile child : toRemove.getFiles())
+			toRemove.removeImport(child.getFilename());
+		removeFile(toRemove, false);
+		eventBus.post(new RemoveImportEvent(toRemove));
 	}
 	
 	@Override
 	public void removeFile(LessFile file) {
-		for(LessFile child : file.getFiles())
-			file.removeFile(child.getFilename());
-		if(logger.isDebugEnabled())
-			logger.debug("REMOVED import {} from file {} (root={})", file, this, root);
+		removeFile(file, true);
+	}
+	
+	public void removeFile(LessFile file, boolean fireEvents) {
+		if(logger.isTraceEnabled())
+			logger.trace("REMOVED import {} from file {} (root={})", file, this, root);
 		files.remove(file);
 		paths.remove(file.getFilename());
-		eventBus.post(new RemoveImportEvent(file));
+		if(fireEvents)
+			eventBus.post(new RemoveFileEvent(file));
 	}
 	
 	public List<LessFile> getRecursiveImportList() {
@@ -240,8 +249,8 @@ public class LessFile implements Serializable, LessContainer {
 		for (String importFilename : importDeclarations) {
 			LessFile toAdd = lessFileProvider.get();
 			toAdd.initialize(importFilename, this);
-			if (logger.isDebugEnabled())
-				logger.debug("Adding file '{}'", importFilename);
+			if (logger.isTraceEnabled())
+				logger.trace("Adding file '{}'", importFilename);
 		}
 	}
 	
@@ -296,6 +305,13 @@ public class LessFile implements Serializable, LessContainer {
 		}
 		
 		return imports;
+	}
+	
+	@Override
+	public List<LessContainer> getPath() {
+		List<LessContainer> path = parent.getPath();
+		path.add(this);
+		return path;
 	}
 	
 }

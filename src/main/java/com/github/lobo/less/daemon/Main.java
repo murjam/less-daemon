@@ -1,7 +1,9 @@
 package com.github.lobo.less.daemon;
 
 import java.awt.EventQueue;
+import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +24,6 @@ import com.google.common.eventbus.Subscribe;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 
-@SuppressWarnings("serial")
 public class Main {
 
 	private static final Logger logger = LoggerFactory.getLogger(Main.class);
@@ -90,19 +91,21 @@ public class Main {
 	}
 
 	public static void main(String[] args) throws Exception {
-//		new Main().start(args);
+		new Main().start(args);
 //		new Main().start("load", "/Users/dev/git/egoi/megan-web-ui/resources/assets/less/");
-		new Main().start("load", "/tmp/less/");
+//		new Main().start("load", "/tmp/less");
 	}
 
 	@Subscribe
 	public void onTrayReady(TrayReadyEvent event) {
-		/*
-		Set<LessFolder> folders = preferenceManager.readPreferences();
-		// Add from preferences
-		for (LessFolder folder : folders)
-			add(folder, false);
-			*/
+		try {
+			Set<LessFolder> folders = preferenceManager.readFolderSet();
+			// Add from preferences
+			for (LessFolder folder : folders)
+				folderManager.addFolder(folder, false);
+		} catch (IOException e) {
+			logger.warn("Error reading preferences: {}", e.getMessage());
+		}
 		
 		// Add from command line
 		for(String filename : loadCommand.folders)
@@ -114,11 +117,6 @@ public class Main {
 			logger.error("Error starting file alteration monitor: " + e.getMessage(), e);
 			exit(1);
 		}
-	}
-
-	private void add(LessFolder folder, boolean fireEvents) {
-		folderManager.addFolder(folder, fireEvents);
-		tray.createFolderEntry(folder);
 	}
 
 	@Subscribe

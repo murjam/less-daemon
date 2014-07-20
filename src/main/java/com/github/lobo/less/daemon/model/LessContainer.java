@@ -20,4 +20,6 @@ public interface LessContainer {
 
 	void addFile(LessFile file);
 	
+	List<LessContainer> getPath();
+	
 }

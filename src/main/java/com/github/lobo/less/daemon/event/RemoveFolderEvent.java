@@ -10,9 +10,20 @@ public class RemoveFolderEvent implements Serializable {
 
 	private LessFolder folder;
 
-	public RemoveFolderEvent(LessFolder folder) {
+	private boolean store;
+
+	public RemoveFolderEvent(LessFolder folder, boolean store) {
+		this.store = store;
 		Preconditions.checkNotNull(folder, "The folder cannot be null for remove event");
 		this.folder = folder;
+	}
+
+	public boolean isStore() {
+		return store;
+	}
+
+	public void setStore(boolean store) {
+		this.store = store;
 	}
 
 	public LessFolder getFolder() {
@@ -25,7 +36,7 @@ public class RemoveFolderEvent implements Serializable {
 
 	@Override
 	public String toString() {
-		return "AddFolderEvent [folder=" + folder + "]";
+		return "RemoveFolderEvent [folder=" + folder + ", store=" + store + "]";
 	}
 
 }

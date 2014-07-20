@@ -1,39 +1,39 @@
 package com.github.lobo.less.daemon.preferences;
 
-import static java.text.MessageFormat.format;
-
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.beust.jcommander.internal.Lists;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.lobo.less.daemon.model.LessFolder;
 
 public abstract class PreferenceUtil {
 
 	private static final Logger logger = LoggerFactory.getLogger(PreferenceUtil.class);
 	
-	private static final String FOLDER_KEY_TEMPLATE = "LessFolder({0})";
-	
 	private static final ObjectMapper objectMapper = new ObjectMapper();
 
-	public static String toJson(LessFolder folder) {
+	public static String toJson(Set<String> folderSet) {
 		try {
-			return objectMapper.writeValueAsString(folder);
+			return objectMapper.writeValueAsString(folderSet);
 		} catch (JsonProcessingException e) {
-			logger.error(e.getMessage());
-			return null;
+			logger.error("Error converting folder set to json: " + e.getMessage(), e);
+			return "[]";
 		}
 	}
-
-	public static LessFolder toFolder(String json) throws IOException {
-		return objectMapper.readValue(json, LessFolder.class);
-	}
 	
-	public static String toKey(LessFolder folder) {
-		return format(FOLDER_KEY_TEMPLATE, folder.getFilename());
+	@SuppressWarnings("unchecked")
+	public static List<String> fromJson(String json) {
+		try {
+			return objectMapper.readValue(json, List.class);
+		} catch (IOException e) {
+			logger.error("Error converting folder set from json: " + e.getMessage(), e);
+			return Lists.newArrayList();
+		}
 	}
 	
 

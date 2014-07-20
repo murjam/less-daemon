@@ -4,12 +4,14 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.beust.jcommander.internal.Lists;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @SuppressWarnings("serial")
 public class LessFolder implements Serializable, LessContainer {
 
 	private String filename;
 
+	@JsonIgnore
 	private List<LessFile> files = Lists.newArrayList();
 
 	public LessFolder() {}
@@ -93,6 +95,13 @@ public class LessFolder implements Serializable, LessContainer {
 	@Override
 	public String toString() {
 		return "LessFolder [filename=" + filename + "]";
+	}
+	
+	@Override
+	public List<LessContainer> getPath() {
+		List<LessContainer> path = Lists.newArrayList();
+		path.add(this);
+		return path;
 	}
 
 }

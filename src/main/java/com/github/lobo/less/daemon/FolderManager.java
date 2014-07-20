@@ -72,44 +72,42 @@ public class FolderManager {
 		addFolder(filename, true);
 	}
 
-	public void addFolder(String filename, boolean fireEvents) {
-		addFolder(new LessFolder(filename), true);
+	public void addFolder(String filename, boolean store) {
+		addFolder(new LessFolder(filename), store);
 	}
 
 	public void addFolder(LessFolder folder) {
 		addFolder(folder, true);
 	}
 
-	public void addFolder(LessFolder folder, boolean fireEvents) {
+	public void addFolder(LessFolder folder, boolean store) {
 		if (logger.isTraceEnabled())
-			logger.trace("Adding LessFolder({}) - fireEvents: {}", folder.getFilename(), fireEvents);
+			logger.trace("Adding LessFolder({}) - store: {}", folder.getFilename(), store);
 		folders.put(folder.getFilename(), folder);
 		processFolder(folder);
-		if (fireEvents)
-			eventBus.post(new AddFolderEvent(folder));
+		eventBus.post(new AddFolderEvent(folder, store));
 	}
 
 	public void removeFolder(String filename) {
 		removeFolder(filename, true);
 	}
 
-	private void removeFolder(String filename, boolean fireEvents) {
+	private void removeFolder(String filename, boolean store) {
 		if (!folders.containsKey(filename))
 			return;
 		LessFolder removed = folders.get(filename);
 		if (logger.isDebugEnabled())
-			logger.debug("Removing LessFolder({}) - fireEvents: {}", filename, fireEvents);
+			logger.debug("Removing LessFolder({}) - store: {}", filename, store);
 		folders.remove(filename);
-		if (fireEvents)
-			eventBus.post(new RemoveFolderEvent(removed));
+		eventBus.post(new RemoveFolderEvent(removed, store));
 	}
 
 	public void removeFolder(LessFolder folder) {
 		removeFolder(folder.getFilename());
 	}
 
-	public void removeFolder(LessFolder folder, boolean fireEvents) {
-		removeFolder(folder.getFilename(), fireEvents);
+	public void removeFolder(LessFolder folder, boolean store) {
+		removeFolder(folder.getFilename(), store);
 	}
 
 	public void addFolders(Set<LessFolder> folders) {
