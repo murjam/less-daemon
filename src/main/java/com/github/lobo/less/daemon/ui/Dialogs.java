@@ -2,8 +2,11 @@ package com.github.lobo.less.daemon.ui;
 
 import java.awt.FileDialog;
 import java.awt.Frame;
+import java.awt.HeadlessException;
 import java.io.File;
 import java.nio.file.Paths;
+
+import javax.swing.JOptionPane;
 
 import com.google.common.base.Preconditions;
 
@@ -62,6 +65,13 @@ public abstract class Dialogs {
 			callback.selected(file);
 		} else
 			callback.canceled();
+	}
+
+	public static void showError(String error, String title) {
+		try {
+			JOptionPane.showMessageDialog(null, error, title, JOptionPane.ERROR_MESSAGE);
+		} catch (HeadlessException e) {
+		}		
 	}
 
 }

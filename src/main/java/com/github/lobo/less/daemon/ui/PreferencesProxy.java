@@ -43,13 +43,24 @@ public class PreferencesProxy extends MenuItem implements ActionListener{
 	private DefaultListModel<LessFolder> folderListModel;
 
 	private JList<LessFolder> folderList;
+
+	private EventBus eventBus;
+
+	private PreferenceManager preferenceManager;
 	
 	@Inject
 	public PreferencesProxy(EventBus eventBus, PreferenceManager preferenceManager) {
 		super("Preferences...");
+		this.eventBus = eventBus;
+		this.preferenceManager = preferenceManager;
 		eventBus.register(this);
-		
 		addActionListener(this);
+	}
+
+	private void init() {
+		if(frame != null)
+			return;
+		
 		frame = new JFrame("Less Compiler Daemon - Dependency Tree");
 		Container contentPane = frame.getContentPane();
 		contentPane.setLayout(new BorderLayout());
@@ -93,6 +104,7 @@ public class PreferencesProxy extends MenuItem implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		init();
 		frame.setVisible(true);
 	}
 	

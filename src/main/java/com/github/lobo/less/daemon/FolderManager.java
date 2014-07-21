@@ -6,6 +6,7 @@ import java.nio.file.DirectoryStream.Filter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -113,6 +114,10 @@ public class FolderManager {
 	public void addFolders(Set<LessFolder> folders) {
 		for (LessFolder folder : folders)
 			addFolder(folder, false);
+	}
+
+	public Collection<LessFolder> getFolderList() {
+		return folders.values(); 
 	}
 
 }

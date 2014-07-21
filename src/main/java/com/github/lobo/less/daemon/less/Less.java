@@ -1,5 +1,7 @@
 package com.github.lobo.less.daemon.less;
 
+import static java.text.MessageFormat.format;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -11,9 +13,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.lobo.less.daemon.Constants;
 import com.github.lobo.less.daemon.event.NeedsCompileEvent;
 import com.github.lobo.less.daemon.model.LessFile;
 import com.github.lobo.less.daemon.preferences.PreferenceManager;
+import com.github.lobo.less.daemon.ui.Dialogs;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
@@ -63,29 +67,30 @@ public class Less {
 
 				@Override
 				public void error(String error, Throwable e) {
-					System.out.println("error: " + error);
+					Dialogs.showError(error, Constants.APP_NAME);
 				}
 
 				@Override
 				public void done(String css) {
 					// Ensure dir exists
 					Path outputPath = getOutputPath(filename);
-					if(logger.isDebugEnabled())
-						logger.debug("Compile output for '{}':\n{}", filename, css);
+					if(logger.isTraceEnabled())
+						logger.trace("Compile output for '{}':\n{}", filename, css);
 					try {
 						Files.createDirectories(outputPath.getParent());
 						Files.write(outputPath, css.getBytes());
 						if(logger.isDebugEnabled())
 							logger.debug("Saved compile result to '{}'", outputPath);
 					} catch (IOException e) {
-						logger.error("Error saving compile result to {}", outputPath);
+						String message = format("Error compiling {0}:\n{1}", filename, e.getMessage());
+						Dialogs.showError(message, Constants.APP_NAME);
 					}
 				}
 			});
 		}
 	}
 
-	public void compile(String filename, final CompileCallback callback) {
+	public void compile(final String filename, final CompileCallback callback) {
 		Preconditions.checkNotNull(filename);
 		Preconditions.checkNotNull(callback);
 
@@ -110,7 +115,8 @@ public class Less {
 						if(!Strings.isNullOrEmpty(css))
 							callback.done(css);
 					} catch (Exception e) {
-						callback.error(e.getMessage(), e);
+						String message = format("Error compiling {0}:\n{1}", filename, e.getMessage());
+						callback.error(message, e);
 					}
 
 				}
@@ -121,10 +127,13 @@ public class Less {
 					try {
 						InputStream stream = process.getErrorStream();
 						String error = CharStreams.toString(new InputStreamReader(stream, Charsets.UTF_8));
-						if(!Strings.isNullOrEmpty(error))
-							callback.error(error, null);
+						if(!Strings.isNullOrEmpty(error)) {
+							String message = format("Error compiling {0}:\n{1}", filename, error);
+							callback.error(message, null);
+						}
 					} catch (Exception e) {
-						callback.error(e.getMessage(), e);
+						String message = format("Error compiling {0}:\n{1}", filename, e.getMessage());
+						callback.error(message, e);
 					}
 
 				}

@@ -10,6 +10,8 @@ import javax.swing.UIManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.lobo.less.daemon.Constants;
+import com.github.lobo.less.daemon.action.CompileAllItem;
 import com.github.lobo.less.daemon.action.ExitItem;
 import com.github.lobo.less.daemon.event.ExitEvent;
 import com.github.lobo.less.daemon.event.TrayReadyEvent;
@@ -31,6 +33,7 @@ public class Tray implements Runnable {
 	private SystemTray tray;
 	
 	@Inject ExitItem exitItem;
+	@Inject CompileAllItem compileAllItem;
 	@Inject PreferencesProxy preferencesItem;
 	
 	@Inject
@@ -41,7 +44,7 @@ public class Tray implements Runnable {
 		
 		tray = SystemTray.getSystemTray();
 		mainMenu = new PopupMenu();
-		trayIcon = new TrayIcon(Icons.LESS_IMAGE, "Less Compiler Daemon", mainMenu);
+		trayIcon = new TrayIcon(Icons.LESS_IMAGE, Constants.APP_NAME, mainMenu);
 		
 	}
 	
@@ -58,6 +61,8 @@ public class Tray implements Runnable {
 			tray.add(trayIcon);
 			
 			mainMenu.add(preferencesItem);
+			mainMenu.addSeparator();
+			mainMenu.add(compileAllItem);
 			mainMenu.addSeparator();
 			mainMenu.add(exitItem);
 			

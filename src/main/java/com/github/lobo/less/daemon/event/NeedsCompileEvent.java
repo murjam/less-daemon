@@ -1,7 +1,7 @@
 package com.github.lobo.less.daemon.event;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.Collection;
 
 import com.beust.jcommander.internal.Sets;
 import com.github.lobo.less.daemon.model.LessFile;
@@ -9,17 +9,17 @@ import com.github.lobo.less.daemon.model.LessFile;
 @SuppressWarnings("serial")
 public class NeedsCompileEvent implements Serializable {
 
-	private Set<LessFile> compileSet = Sets.newHashSet();
+	private Collection<LessFile> compileSet = Sets.newHashSet();
 
-	public NeedsCompileEvent(Set<LessFile> compileSet) {
+	public NeedsCompileEvent(Collection<LessFile> compileSet) {
 		this.compileSet = compileSet;
 	}
 
-	public Set<LessFile> getCompileSet() {
+	public Collection<LessFile> getCompileSet() {
 		return compileSet;
 	}
 
-	public void setCompileSet(Set<LessFile> compileSet) {
+	public void setCompileSet(Collection<LessFile> compileSet) {
 		this.compileSet = compileSet;
 	}
 
