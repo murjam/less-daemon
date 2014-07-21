@@ -2,6 +2,8 @@ package com.github.lobo.less.daemon.ui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
@@ -15,12 +17,16 @@ import javax.swing.JSeparator;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListCellRenderer;
 
+import com.github.lobo.less.daemon.FolderManager;
+import com.github.lobo.less.daemon.action.AddFolderAction;
+import com.github.lobo.less.daemon.action.RemoveFolderAction;
 import com.github.lobo.less.daemon.event.AddFolderEvent;
 import com.github.lobo.less.daemon.event.RemoveFolderEvent;
 import com.github.lobo.less.daemon.model.LessFolder;
 import com.github.lobo.less.daemon.resources.Icons;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
 
 @SuppressWarnings("serial")
 public class FolderManagerPanel extends JPanel {
@@ -59,16 +65,9 @@ public class FolderManagerPanel extends JPanel {
 
 	}
 
-	public FolderManagerPanel(EventBus eventBus) {
+	@Inject
+	public FolderManagerPanel(EventBus eventBus, final FolderManager folderManager, final AddFolderAction addFolderAction, final RemoveFolderAction removeFolderAction) {
 		eventBus.register(this);
-		initUi();
-	}
-
-	public FolderManagerPanel() {
-		initUi();
-	}
-
-	private void initUi() {
 
 		buttonAdd = new JButton("Add");
 		buttonAdd.setIcon(Icons.ADD_FOLDER_ICON);
@@ -117,22 +116,30 @@ public class FolderManagerPanel extends JPanel {
 		folderList.setCellRenderer(new FolderListRenderer());
 		setLayout(groupLayout);
 
-	}
+		buttonAdd.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				if(addFolderAction == null)
+					return;
+				
+				addFolderAction.execute();
+			}
+		});
 
-	protected JList<LessFolder> getList() {
-		return folderList;
-	}
-
-	public JButton getButtonAdd() {
-		return buttonAdd;
-	}
-
-	public JButton getButtonRemove() {
-		return buttonRemove;
-	}
-
-	public DefaultListModel<LessFolder> getListModel() {
-		return listModel;
+		buttonRemove.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				if(removeFolderAction == null)
+					return;
+				
+				for (LessFolder folder : folderList.getSelectedValuesList())
+					removeFolderAction.execute(folder);
+			}
+		});
+		
+		if(folderManager != null)
+			for(LessFolder folder : folderManager.getFolderList())
+				addFolder(folder);
 	}
 
 	public void addFolder(LessFolder folder) {

@@ -11,12 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.lobo.less.daemon.Constants;
-import com.github.lobo.less.daemon.action.CompileAllItem;
-import com.github.lobo.less.daemon.action.ExitItem;
 import com.github.lobo.less.daemon.event.ExitEvent;
 import com.github.lobo.less.daemon.event.TrayReadyEvent;
 import com.github.lobo.less.daemon.resources.Icons;
-import com.github.lobo.less.daemon.ui.PreferencesProxy;
+import com.github.lobo.less.daemon.ui.Actions;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.Inject;
 
@@ -32,9 +30,7 @@ public class Tray implements Runnable {
 
 	private SystemTray tray;
 	
-	@Inject ExitItem exitItem;
-	@Inject CompileAllItem compileAllItem;
-	@Inject PreferencesProxy preferencesItem;
+	@Inject Actions actions;
 	
 	@Inject
 	public Tray(EventBus eventBus) {
@@ -60,18 +56,18 @@ public class Tray implements Runnable {
 		try {
 			tray.add(trayIcon);
 			
-			mainMenu.add(preferencesItem);
+			mainMenu.add(actions.openPreferencesMenuItem());
 			mainMenu.addSeparator();
-			mainMenu.add(compileAllItem);
+			mainMenu.add(actions.compileAllMenuItem());
+			mainMenu.add(actions.eventMenuItem());
 			mainMenu.addSeparator();
-			mainMenu.add(exitItem);
+			mainMenu.add(actions.quitMenuItem());
 			
 			eventBus.post(new TrayReadyEvent(this));
 		} catch (AWTException e) {
 			logger.error("Cannot add tray icon: " + e.getMessage(), e);
 			eventBus.post(new ExitEvent(1));
 		}			
-		
 	}
 	
 	public PopupMenu getPopupMenu() {

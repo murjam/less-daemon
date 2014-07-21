@@ -1,4 +1,4 @@
-package com.github.lobo.less.daemon.ui.dep;
+package com.github.lobo.less.daemon.ui;
 
 import java.awt.Component;
 import java.nio.file.Path;
@@ -6,10 +6,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -21,6 +17,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import com.github.lobo.less.daemon.FolderManager;
 import com.github.lobo.less.daemon.event.AddFolderEvent;
 import com.github.lobo.less.daemon.event.AddImportEvent;
 import com.github.lobo.less.daemon.event.RemoveFolderEvent;
@@ -33,21 +30,22 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.google.inject.Inject;
 
 @SuppressWarnings("serial")
-public class DependencyPanel extends JPanel {
-
-	private DefaultTreeModel treeModel;
-
-	private DefaultTreeSelectionModel selectionModel;
+public class DepencencyTree extends JTree {
 
 	private List<LessFolder> folders = Lists.newArrayList();
-
-	private JTree tree;
 
 	private static final String ROOT_NODE = "/";
 
 	private Map<LessContainer, LessContainerTreeNode> nodeMap = Maps.newConcurrentMap();
+	
+	private DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(ROOT_NODE);
+
+	private DefaultTreeModel treeModel;
+
+	private DefaultTreeSelectionModel selectionModel;
 
 	class LessTreeModel implements TreeModel {
 
@@ -169,55 +167,34 @@ public class DependencyPanel extends JPanel {
 		}
 	}
 
-	private DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(ROOT_NODE);
 
-	public DependencyPanel(EventBus eventBus) {
-		this();
+	@Inject
+	public DepencencyTree(EventBus eventBus, FolderManager folderManager) {
 		eventBus.register(this);
-	}
-
-	public DependencyPanel() {
 		treeModel = new DefaultTreeModel(rootNode);
 		selectionModel = new DefaultTreeSelectionModel();
-
-		JScrollPane scrollPane = new JScrollPane();
-
-		// @formatter:off
-		GroupLayout groupLayout = new GroupLayout(this);
-		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.TRAILING)
-				.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
-					.addContainerGap())
-		);
-		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
-					.addContainerGap())
-		);
-		// @formatter:on
-
-		tree = new JTree(treeModel);
-		scrollPane.setViewportView(tree);
-		tree.setCellRenderer(new LessCellRenderer());
-		tree.setSelectionModel(selectionModel);
-		setLayout(groupLayout);
-
+		setModel(treeModel);
+		setSelectionModel(selectionModel);
+		setCellRenderer(new LessCellRenderer());
+		for(LessFolder folder : folderManager.getFolderList())
+			addFolder(folder);
 	}
+	
 
 	@Subscribe
 	public void onAddFolder(AddFolderEvent event) {
 		LessFolder folder = event.getFolder();
+		addFolder(folder);
+	}
+
+	private void addFolder(LessFolder folder) {
 		LessContainerTreeNode node = addChild(folder, rootNode);
 		if(node != null) {
 			walkFiles(folder);
 			TreeNode[] nodePath = treeModel.getPathToRoot(node);
 			TreePath path = new TreePath(nodePath);
-			tree.setSelectionPath(path);
-			tree.expandPath(path);
+			setSelectionPath(path);
+			expandPath(path);
 		}
 	}
 
@@ -242,8 +219,8 @@ public class DependencyPanel extends JPanel {
 		if (node != null) {
 			TreeNode[] nodePath = treeModel.getPathToRoot(node);
 			TreePath path = new TreePath(nodePath);
-			tree.setSelectionPath(path);
-			tree.expandPath(path);
+			setSelectionPath(path);
+			expandPath(path);
 		}
 	}
 
@@ -270,5 +247,5 @@ public class DependencyPanel extends JPanel {
 		treeModel.insertNodeInto(fileNode, parentNode, 0);
 		return fileNode;
 	}
-
+	
 }

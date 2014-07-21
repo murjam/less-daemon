@@ -19,6 +19,7 @@ import com.github.lobo.less.daemon.less.Less.OutputOption;
 import com.github.lobo.less.daemon.preferences.PreferenceManager;
 import com.google.common.base.Preconditions;
 import com.google.common.eventbus.EventBus;
+import com.google.inject.Inject;
 import com.jgoodies.forms.factories.FormFactory;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
@@ -47,10 +48,7 @@ public class PreferenceManagerPanel extends JPanel {
 		}
 	};
 
-	public PreferenceManagerPanel() {
-		initUi();
-	}
-
+	@Inject
 	public PreferenceManagerPanel(PreferenceManager preferenceManager, EventBus eventBus) {
 		Preconditions.checkNotNull(preferenceManager, "Preference manager cannot be nul");
 		this.preferenceManager = preferenceManager;
