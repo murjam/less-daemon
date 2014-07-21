@@ -19,6 +19,7 @@ import com.github.lobo.less.daemon.action.AddFolderAction;
 import com.github.lobo.less.daemon.action.RemoveFolderAction;
 import com.github.lobo.less.daemon.event.AddFolderEvent;
 import com.github.lobo.less.daemon.model.LessFolder;
+import com.github.lobo.less.daemon.preferences.PreferenceManager;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
@@ -44,7 +45,7 @@ public class PreferencesProxy extends MenuItem implements ActionListener{
 	private JList<LessFolder> folderList;
 	
 	@Inject
-	public PreferencesProxy(EventBus eventBus) {
+	public PreferencesProxy(EventBus eventBus, PreferenceManager preferenceManager) {
 		super("Preferences...");
 		eventBus.register(this);
 		
@@ -53,7 +54,7 @@ public class PreferencesProxy extends MenuItem implements ActionListener{
 		Container contentPane = frame.getContentPane();
 		contentPane.setLayout(new BorderLayout());
 		
-		preferencePanel = new PreferencePanel(eventBus);
+		preferencePanel = new PreferencePanel(preferenceManager, eventBus);
 		contentPane.add(preferencePanel);
 
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();

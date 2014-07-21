@@ -1,10 +1,9 @@
 package com.github.lobo.less.daemon.action;
 
-import java.awt.FileDialog;
-import java.awt.Frame;
-import java.nio.file.Paths;
+import java.io.File;
 
 import com.github.lobo.less.daemon.FolderManager;
+import com.github.lobo.less.daemon.ui.Dialogs;
 import com.google.inject.Inject;
 
 public class AddFolderAction {
@@ -17,14 +16,12 @@ public class AddFolderAction {
 	}
 
 	public void execute() {
-		System.setProperty("apple.awt.fileDialogForDirectories", "true");
-		FileDialog dialog = new FileDialog((Frame) null);
-		dialog.setVisible(true);
-		System.setProperty("apple.awt.fileDialogForDirectories", "false");
-		if (dialog.getFile() != null) {
-			String filename = Paths.get(dialog.getDirectory(), dialog.getFile()).toAbsolutePath().toString();
-			folderManager.addFolder(filename);
-		}
+		Dialogs.chooseDirectory(new Dialogs.FileDialogAdapter() {
+			@Override
+			public void selected(File file) {
+				folderManager.addFolder(file.getAbsolutePath());
+			}
+		});
 	}
 
 }

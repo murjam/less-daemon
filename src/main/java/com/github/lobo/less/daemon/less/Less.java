@@ -35,8 +35,10 @@ public class Less {
 
 	public static final String DEFAULT_LESSC_OPTIONS = "--compress";
 
+	public static final String DEFAULT_OUTPUT_OPTION = OutputOption.PARENT_CSS.name();
+
 	public static enum OutputOption {
-		SAME, PARENT_CSS
+		SAME, PARENT_CSS, CUSTOM
 	}
 
 	private PreferenceManager preferenceManager;

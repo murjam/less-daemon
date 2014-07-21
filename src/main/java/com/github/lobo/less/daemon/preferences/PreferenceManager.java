@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.lobo.less.daemon.FolderManager;
 import com.github.lobo.less.daemon.event.AddFolderEvent;
+import com.github.lobo.less.daemon.event.PreferenceChangeEvent;
 import com.github.lobo.less.daemon.event.RemoveFolderEvent;
 import com.github.lobo.less.daemon.less.Less;
 import com.github.lobo.less.daemon.model.LessFolder;
@@ -29,6 +30,8 @@ public class PreferenceManager {
 
 	public static final String KEY_LESSC_OPTIONS = "lessc.options";
 	
+	public static final String KEY_OUTPUT_OPTION = "output.option";
+
 	public static final String KEY_OUTPUT_PATH = "output.path";
 
 	private static final Logger logger = LoggerFactory.getLogger(PreferenceManager.class);
@@ -50,7 +53,11 @@ public class PreferenceManager {
 	}
 
 	public String getOutputOption() {
-		return preferences.get(KEY_OUTPUT_PATH, Less.OutputOption.PARENT_CSS.name());
+		return preferences.get(KEY_OUTPUT_OPTION, Less.DEFAULT_OUTPUT_OPTION);
+	}
+	
+	public String getOutputPath() {
+		return preferences.get(KEY_OUTPUT_PATH, ".");
 	}
 	
 	public Set<LessFolder> readFolderSet() throws IOException {
@@ -73,7 +80,7 @@ public class PreferenceManager {
 			return;
 		
 		folderSet.add(event.getFolder().getFilename());
-		store();
+		storeFolderList();
 	}
 
 	@Subscribe
@@ -82,6 +89,20 @@ public class PreferenceManager {
 			return;
 		
 		folderSet.remove(event.getFolder().getFilename());
+		storeFolderList();
+	}
+	
+	@Subscribe
+	public void onPreferenceChange(PreferenceChangeEvent event) {
+		if(logger.isDebugEnabled())
+			logger.debug("Preference '{}' changed to '{}'", event.getKey(), event.getNewValue());
+		preferences.put(event.getKey(), event.getNewValue());
+		store();
+	}
+	
+	private void storeFolderList() {
+		String json = PreferenceUtil.toJson(folderSet);
+		preferences.put(KEY_FOLDER_LIST, json);
 		store();
 	}
 
@@ -94,6 +115,5 @@ public class PreferenceManager {
 			logger.error(e.getMessage());
 		}
 	}
-
 
 }
