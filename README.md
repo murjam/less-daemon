@@ -8,19 +8,50 @@ About
 
 Less Compiler Daemon is a simple java based application which allows you to compile __.less__ files automatically while running in the background. You can add any given number of directories for the daemon to listen for changes.
 
-The daemon is also listening for changes in __@import__ed files and will re-compile the related file. 
+The daemon is also listening for changes in __@import__'ed files and will re-compile the related file in the added directory.
 
 The main features are:
 
-* Auto-compile multiple __.less__ containing directories
 * Tray icon for ease of access
 
-![Alt text](/screenshots/tray-icon.png?raw=true "Tray Menu")
+![Tray Icon](/screenshots/tray-icon.png?raw=true "Tray Menu")
+
+* Auto-compile multiple __.less__ files in configurable directories
+
+![Less Options](/screenshots/prefs-folder-manager.png?raw=true "Tray Menu")
 
 * Choose the destination from: 
 ** same directory
 ** '../css' folder
 ** custom output directory
-* Dependency tree allows you to traverse your __.less @import__ tree
-* Event Log allows you to easily view compile status and error 
+
+![Less Options](/screenshots/prefs-less-options.png?raw=true "Tray Menu")
+
+* Dependency Tree widget allows you to traverse your __.less @import__ tree. This tree is automatically updated when you add/remove imports in files.
+
+![Less Options](/screenshots/events-tree.png?raw=true "Tray Menu")
+
+* Event Log allows you to easily view compile status and error
+
+![Less Options](/screenshots/events-log.png?raw=true "Tray Menu")
+
+Status
+===========
+
+This program was made as an atempt to make my life easier. Because it made, I decided to share it.
+
+Although I didn't find any major issues, this is a work in progress, if you think something is wrong, don't hesitate to comment and contribute.
  
+Building and Runing
+===========
+
+`TODO: add binary builds for major OS'es`
+
+Maven 3 is needed to build and package the application. So to build and run just follow these steps:
+```bash
+git clone https://github.com/lflobo/less-daemon.git
+cd less-daemon
+mvn package
+```
+
+This will create an all-in-one executable file in `target/less-daemon` that you can copy to you `bin` folder and run (no need to copy dependencies).
