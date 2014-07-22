@@ -10,16 +10,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.lobo.less.daemon.FolderManager;
+import com.github.lobo.less.daemon.Main;
 import com.github.lobo.less.daemon.event.AddFolderEvent;
 import com.github.lobo.less.daemon.event.PreferenceChangeEvent;
 import com.github.lobo.less.daemon.event.RemoveFolderEvent;
 import com.github.lobo.less.daemon.less.Less;
 import com.github.lobo.less.daemon.model.LessFolder;
+import com.github.lobo.less.daemon.ui.Dialogs;
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
+@Singleton
 public class PreferenceManager {
 
 	private Preferences preferences;
@@ -37,6 +43,8 @@ public class PreferenceManager {
 	private static final Logger logger = LoggerFactory.getLogger(PreferenceManager.class);
 	
 	private Set<String> folderSet = Sets.newHashSet();
+	
+	private boolean wasUserWarned = false;
 
 	@Inject
 	public PreferenceManager(EventBus eventBus) {
@@ -45,7 +53,33 @@ public class PreferenceManager {
 	}
 	
 	public String getLesscPath() {
-		return preferences.get(KEY_LESSC_PATH, Less.DEFAULT_LESSC_PATH);
+		String path = preferences.get(KEY_LESSC_PATH, null);
+		if(Strings.isNullOrEmpty(path)) {
+			path = checkLesscPath();
+			store();
+		}
+		return path;
+	}
+
+	public String checkLesscPath() {
+		String path = Main.findInPath("lessc");
+		if(path == null && !wasUserWarned) {
+			String nodePath = Main.findInPath("node");
+			String nodeWarning = "";
+			if(nodePath == null)
+				nodeWarning = "Also could not find 'node' executable - This can cause problems.\n";
+			Dialogs.showError(
+				"Could not find 'lessc' executable.\n" +
+				nodeWarning +
+				"Searched in:\n" +
+				Joiner.on('\n').join(Main.paths()) + "\n" +
+				"Please set 'lessc' path in Preferences",
+				"WARNING: Cannot find lessc"
+			);
+			wasUserWarned = true;
+		}
+
+		return path;
 	}
 
 	public String getLesscOptions() {

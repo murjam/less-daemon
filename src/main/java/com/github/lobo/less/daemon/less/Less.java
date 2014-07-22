@@ -13,11 +13,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.lobo.less.daemon.Constants;
+import com.github.lobo.less.daemon.event.LessLogEvent;
+import com.github.lobo.less.daemon.event.LessLogEvent.Type;
 import com.github.lobo.less.daemon.event.NeedsCompileEvent;
 import com.github.lobo.less.daemon.model.LessFile;
 import com.github.lobo.less.daemon.preferences.PreferenceManager;
-import com.github.lobo.less.daemon.ui.Dialogs;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
@@ -35,9 +35,7 @@ public class Less {
 
 	private static final Logger logger = LoggerFactory.getLogger(Less.class);
 
-	public static final String DEFAULT_LESSC_PATH = "/usr/bin/lessc";
-
-	public static final String DEFAULT_LESSC_OPTIONS = "--compress";
+	public static final String DEFAULT_LESSC_OPTIONS = "--no-color --compress";
 
 	public static final String DEFAULT_OUTPUT_OPTION = OutputOption.PARENT_CSS.name();
 
@@ -46,6 +44,8 @@ public class Less {
 	}
 
 	private PreferenceManager preferenceManager;
+
+	private EventBus eventBus;
 
 	public interface CompileCallback {
 		void done(String css);
@@ -57,6 +57,7 @@ public class Less {
 	public Less(EventBus eventBus, PreferenceManager preferenceManager) {
 		this.preferenceManager = preferenceManager;
 		eventBus.register(this);
+		this.eventBus = eventBus;
 	}
 
 	@Subscribe
@@ -67,7 +68,8 @@ public class Less {
 
 				@Override
 				public void error(String error, Throwable e) {
-					Dialogs.showError(error, Constants.APP_NAME);
+					// Dialogs.showError(error, Constants.APP_NAME);
+					eventBus.post(new LessLogEvent(filename, Type.ERROR, error));
 				}
 
 				@Override
@@ -81,9 +83,10 @@ public class Less {
 						Files.write(outputPath, css.getBytes());
 						if(logger.isDebugEnabled())
 							logger.debug("Saved compile result to '{}'", outputPath);
+						eventBus.post(new LessLogEvent(filename, Type.OK, format("Compiled to {0}", outputPath)));
 					} catch (IOException e) {
-						String message = format("Error compiling {0}:\n{1}", filename, e.getMessage());
-						Dialogs.showError(message, Constants.APP_NAME);
+						String text = format("Error compiling {0}", filename);
+						eventBus.post(new LessLogEvent(text, Type.ERROR, e.getMessage()));
 					}
 				}
 			});

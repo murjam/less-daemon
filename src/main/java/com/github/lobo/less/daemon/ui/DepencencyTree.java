@@ -232,7 +232,8 @@ public class DepencencyTree extends JTree {
 
 	private void removeNode(LessContainer container) {
 		LessContainerTreeNode node = nodeMap.get(container);
-		if (node != null) treeModel.removeNodeFromParent(node);
+		if (node != null)
+			node.removeFromParent();
 	}
 
 	private LessContainerTreeNode addChild(LessContainer child, LessContainer parent) {

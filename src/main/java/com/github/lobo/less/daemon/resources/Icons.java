@@ -3,6 +3,7 @@ package com.github.lobo.less.daemon.resources;
 import java.awt.Image;
 import java.awt.Toolkit;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 public abstract class Icons {
@@ -19,7 +20,7 @@ public abstract class Icons {
 	
 	public static final ImageIcon REFRESH_ICON = new ImageIcon(Icons.class.getResource(REFRESH));
 
-	private static final String FOLDER = "folder.gif";
+	public static final String FOLDER = "folder.gif";
 
 	public static final ImageIcon FOLDER_ICON = new ImageIcon(Icons.class.getResource(FOLDER));
 
@@ -37,5 +38,12 @@ public abstract class Icons {
 
 	public static final ImageIcon IMPORT_ICON = new ImageIcon(Icons.class.getResource(IMPORT));
 
+	public static final String OK = "ok.gif";
+
+	public static final Icon OK_ICON = new ImageIcon(Icons.class.getResource(OK));
+
+	public  static final String ERROR = "error.gif";
+
+	public static final ImageIcon ERROR_ICON = new ImageIcon(Icons.class.getResource(ERROR));
 	
 }
