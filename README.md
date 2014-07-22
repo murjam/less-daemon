@@ -1,12 +1,9 @@
-less-daemon
-===========
-
 Less Compiler Daemon
-
-About
 ===========
 
 Less Compiler Daemon is a simple java based application which allows you to compile __.less__ files automatically while running in the background. You can add any given number of directories for the daemon to listen for changes.
+
+Download executable __.jar__ file [here](/binary/less-daemon-0.0.1.jar?raw=true)
 
 The daemon is also listening for changes in __@import__'ed files and will re-compile the related file in the added directory.
 
@@ -45,8 +42,6 @@ Although I didn't find any major issues, this is a work in progress, if you thin
 Building and Runing
 ===========
 
-`TODO: add binary builds for major OS'es`
-
 Maven 3 is needed to build and package the application. So to build and run just follow these steps:
 ```bash
 git clone https://github.com/lflobo/less-daemon.git
@@ -54,4 +49,4 @@ cd less-daemon
 mvn package
 ```
 
-This will create an all-in-one executable file in `target/less-daemon` that you can copy to you `bin` folder and run (no need to copy dependencies).
+This will create an all-in-one __.jar__ file in `target` that you can execute using `java -jar {jarfile}` or by double clicking in your file system browser.
