@@ -3,7 +3,7 @@ Less Compiler Daemon
 
 Less Compiler Daemon is a simple java based application which allows you to compile __.less__ files automatically while running in the background. You can add any given number of directories for the daemon to listen for changes.
 
-Download executable __.jar__ file [here](/binary/less-daemon-0.0.1.jar?raw=true)
+For the impatient - download executable __.jar__ file [here](/binary/less-daemon-0.0.1.jar?raw=true).
 
 The daemon is also listening for changes in __@import__'ed files and will re-compile the related file in the added directory.
 
@@ -18,9 +18,9 @@ The main features are:
 ![Less Options](/screenshots/prefs-folder-manager.png?raw=true "Tray Menu")
 
 * Choose the destination from: 
-** same directory
-** '../css' folder
-** custom output directory
+ * same directory
+ * '../css' folder
+ * custom output directory
 
 ![Less Options](/screenshots/prefs-less-options.png?raw=true "Tray Menu")
 
