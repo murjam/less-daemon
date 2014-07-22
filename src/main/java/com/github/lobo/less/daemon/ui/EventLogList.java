@@ -31,9 +31,6 @@ public class EventLogList extends JList<LessLogEvent> {
 			setEnabled(list.isEnabled());
 			setFont(list.getFont());
 			
-			if(value.isError())
-				actions.eventAction().actionPerformed(null);
-			
 			if(isSelected)
 				setBackground(Color.lightGray);
 			else
