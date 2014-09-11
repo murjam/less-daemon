@@ -22,7 +22,6 @@ public class AddFolderAction {
 				String path;
 				if (file.isFile()) {
 					path = file.getParentFile().getAbsolutePath();
-					System.out.println("Siin! " + path);
 				}
 				else {
 					path = file.getAbsolutePath();
