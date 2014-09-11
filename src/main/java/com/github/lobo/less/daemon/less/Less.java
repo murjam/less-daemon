@@ -157,10 +157,14 @@ public class Less {
 		OutputOption outputOption = OutputOption.valueOf(preferenceManager.getOutputOption());
 		Path outputDirPath;
 		switch (outputOption) {
-			default:
+				
 			case PARENT_CSS:
 				outputDirPath = Paths.get("../css");
 			break;
+			case CUSTOM:
+				outputDirPath = Paths.get(preferenceManager.getOutputPath());
+				break;
+			default:
 			case SAME:
 				outputDirPath = Paths.get("./");
 			break;

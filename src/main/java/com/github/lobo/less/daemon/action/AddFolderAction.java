@@ -19,7 +19,15 @@ public class AddFolderAction {
 		Dialogs.chooseDirectory(new Dialogs.FileDialogAdapter() {
 			@Override
 			public void selected(File file) {
-				folderManager.addFolder(file.getAbsolutePath());
+				String path;
+				if (file.isFile()) {
+					path = file.getParentFile().getAbsolutePath();
+					System.out.println("Siin! " + path);
+				}
+				else {
+					path = file.getAbsolutePath();
+				}
+				folderManager.addFolder(path);
 			}
 		});
 	}
